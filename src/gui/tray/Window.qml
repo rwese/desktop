@@ -42,6 +42,15 @@ Window {
     }
 
     Connections {
+        target: notificationLayer
+        ignoreUnknownSignals: true
+        onDismissNotification: {
+            Systray.dismissLastNotification()
+            notificationLayer.visible = Systray.hasNotification()
+        }
+    }
+
+    Connections {
         target: UserModel
         onRefreshCurrentUserGui: {
             currentAccountAvatar.source = ""
@@ -72,6 +81,10 @@ Window {
         onHideWindow: {
             trayWindow.hide();
             Systray.setClosed();
+        }
+        onNewNotification: {
+            notificationLayer.text = Systray.getLastNotification();
+            notificationLayer.visible = true;
         }
     }
 
@@ -485,7 +498,8 @@ Window {
             anchors.top: trayWindowHeaderBackground.bottom
             anchors.horizontalCenter: trayWindowBackground.horizontalCenter
             width:  Style.trayWindowWidth - Style.trayWindowBorderWidth
-            height: Style.trayWindowHeight - Style.trayWindowHeaderHeight
+            height: notificationLayer.visible ? Style.trayWindowHeight - Style.trayWindowHeaderHeight - Style.notificationHeight
+                                              : Style.trayWindowHeight - Style.trayWindowHeaderHeight
             clip: true
             ScrollBar.vertical: ScrollBar {
                 id: listViewScrollbar
@@ -615,7 +629,14 @@ Window {
             displaced: Transition {
                 NumberAnimation { properties: "y"; duration: 100; easing.type: Easing.Linear }
             }*/
+
+        }   // ListView
+
+        Notification {
+            id: notificationLayer
+            visible: Systray.hasNotification()
+            text: Systray.getLastNotification()
         }
 
-    }       // Rectangle trayWindowBackground
+    }   // Rectangle trayWindowBackground
 }

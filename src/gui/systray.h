@@ -61,6 +61,9 @@ public:
     Q_INVOKABLE void setOpened();
     Q_INVOKABLE void setClosed();
     Q_INVOKABLE void positionWindow(QQuickWindow *window) const;
+    Q_INVOKABLE bool hasNotification() const { return !_notificationList.isEmpty(); }
+    Q_INVOKABLE QString getLastNotification() const;
+    Q_INVOKABLE void dismissLastNotification();
 
 signals:
     void currentUserChanged();
@@ -74,6 +77,7 @@ signals:
     Q_INVOKABLE void hideWindow();
     Q_INVOKABLE void showWindow();
     Q_INVOKABLE void openShareDialog(const QString &sharePath, const QString &localPath);
+    Q_INVOKABLE void newNotification();
 
 public slots:
     void slotNewUserSelected();
@@ -93,6 +97,8 @@ private:
     bool _isOpen = false;
     bool _syncIsPaused = false;
     QPointer<QQmlApplicationEngine> _trayEngine;
+
+    QStringList _notificationList;
 };
 
 } // namespace OCC
